@@ -6,6 +6,6 @@ echo "testphp.vulnweb.com" | subfinder -all |  waybackurls | anew history_url.tx
 meg gau.meg.txt paths
 
 
-echo "testphp.vulnweb.com" | subfinder -all |  waybackurls | anew history_url.txt && cat history_url.txt | gf sqli | uro echo "testphp.vulnweb.com" | subfinder -all |  waybackurls | anew history_url.txt && cat history_url.txt | gf xss | uro
+<picture> echo "testphp.vulnweb.com" | subfinder -all |  waybackurls | anew history_url.txt && cat history_url.txt | gf sqli | uro <picture>
 
 echo "testphp.vulnweb.com" | subfinder -all |  waybackurls | anew history_url.txt && cat history_url.txt | gf xss | uro
