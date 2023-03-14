@@ -1,6 +1,8 @@
 # nulldev96_Metodology
 
-_Provando todos los comando conbinados_
+*Provando todos los comando conbinados*
+The background color should be `#ffffff` for light mode and `#0d1117` for dark mode. 
+
 echo "testphp.vulnweb.com" | subfinder -all |  waybackurls | anew history_url.txt && cat history_url.txt | httpx -silent | anew  | unfurl domains | anew | gau-plus | tee anew gau.meg.txt
 meg gau.meg.txt paths
 
