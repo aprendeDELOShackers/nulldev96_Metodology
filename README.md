@@ -113,7 +113,7 @@
     #"acamar.py"
         acamar.py $dominio 2> /dev/null | grep $dominio | sort -u | anew acam.txt
     #"github-subdomains.py"
-        github-subdomains.py -t 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 -d $dominio | sort -u | anew git_su.txt
+        github-subdomains.py -t {token} -d $dominio | sort -u | anew git_su.txt
     #Registrarse en "https://recon.dev" para obtener la api y sacar subdomain con el comando "CURL"
         curl "https://recon.dev/api/search?key={API}domain={domain}" | jq -r '.[].rawDomains'  set 's/ //g' | anew | httpx -silent | xargs -P3 I@ gospider -d 0 -s @ -c 5 -t 100 --blacklist jpg,jpeg,git,css,tif,tiff,png,ttf,wolf,wolf2,ico,pdf,svg,txt | grep -Eo '(http|https)://[^/"]+' | anew sub.txt
 
