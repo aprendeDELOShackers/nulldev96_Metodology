@@ -133,8 +133,10 @@
     }
     extraer_URL
     
-#****_Forma rapida de busqueda de archivo _.js_ ====>  "echo | waybackurls"_****
-
+#****_Forma rapida de busqueda de archivo _.js__****
+     
+    #jsbeautify.py - Javascript embellecer
+       python3 jsbeautify https://www.paypalobject.com/test.js paypal/manualAnalyzis.js
     #SEARCH .json
        gospider -s https://twitch.tv --js | grep -E "\.js(?:onp?)?$" | awk '{print $5}' | fff | grep -v 404
     #SEARCH .json filter anti-burl
@@ -144,6 +146,18 @@
        echo "http://testphp.vulnweb.com" | gau | grep -E "\.js(?:onp?)?$" | fff | grep -v 404 
        echo "http://testphp.vulnweb.com" | gauplus | grep -E "\.js(?:onp?)?$" | fff | grep -v 404
        echo "testphp.vulnweb.com" | gau  | subjs | fff | grep -v 404
+    #getSrc - Herramienta para extraer enlaces de secuencias de comandos, lo bueno de esta herramienta es que crea una URL absoluta.
+       python3 getSrc.py http://vulnweb.com 
+    #SecretFinder: herramienta para descubrir datos confidenciales como apikeys, accesstoken, autorizaciones, jwt, etc. en un archivo js
+       echo "vulnweb.com" | subfinder | waybackurls | grep -E "\.js(?:onp?)?$" | anew vulnJS.txt | cat vulnlJS.txt | xargs -n2 -I @ bash -c 'echo -e "\n[URL] @\n";python3 linkfinder.py -i @ -o cli' >> paypalJsSecrets.txt
+    "antiburl/antiburl.py: toma las URL en la entrada estándar, las imprime en la salida estándar si devuelven un 200 OK. antiburl.py es una versión avanzada
+       echo "vulnweb.com" | subfinder | waybackurls | grep -E "\.js(?:onp?)?$" | anew  archi.js.txt | cat archi.js.txt | antiburl > vulnJSAlive.txt | cat vulnJSAlive.txt | python3 antiburl.py -A -X 404 -H 'header:value' 'header2:value2' -N -C "mycookies=10" -T 50 
+    #ffuf - herramienta para fuzzing, también la uso para fuzzing de archivos js
+       ffuf -u http://testphp.vulnweb.com/js/ -w jsWordlist.txt -t 200 
+    #gitHubLinks.py: encuentre nuevos enlaces en GitHub, en este caso solo enlaces javascript
+       python3 gitHubLinks.py testphp.vulnweb.com | grep -iE '\.js' | anew arch.js.txt
+    #collector.py - Split linkfinder stdout in jsfile,urls,params..etc
+       python3 linkfinder.py -i http://testphp.vulnweb.com/a.js -o cli | python3 collector.py output
     #SEARCH .json subdomain
        assetfinder -subs-only vulnweb.com | waybackurls | grep -E "\.json(?:onp?)?$" | hakcheckurl | grep -v 404
     #Usando búsqueda de chaos js
@@ -152,6 +166,15 @@
        echo "testphp.vuln.com" | waybackurls | grep -iE '\.js' | grep -ivE '\.json' | sort -u  > j.txt
     #SEARCH .js USING
        assetfinder -subs-only testphp.vulnweb.com -silent | httpx -timeout 3 -threads 300 --follow-redirects -silent | xargs -I% -P10 sh -c 'hakrawler -plain -linkfinder -depth 5 -url %' | awk '{print $3}' | grep -E "\.js(?:onp?)?$"  | hakcheckurl | grep -v 404
+    #linkfinder: esta herramienta es excelente, generalmente la uso para buscar rutas, enlaces, combinado con y Collector.py es increíble.
+       echo "vulnweb.com" | subfinder | waybackurls | grep -E "\.js(?:onp?)?$" | arch.js.txt  cat arch.js.txt | xargs -n2 -I @ bash -c 'echo -e "\n[URL] @\n";python3 linkfinder.py -i @ -o cli' >> JSPaths_Url.txt | cat JSPaths_Url.txt | grep -iv '[URL]' | anew JSLink_Url.txt | cat JSLink_Url.txt | python3 collector.py output
     #Recopila .js gau+wayback+gospider y hace un análisis del js.
        cat dominios | gau |grep -iE '\.js'|grep -iEv '(\.jsp|\.json)' >> gauJS.txt ; cat dominios | waybackurls | grep -iE '\.js'|grep -iEv '(\.jsp|\.json)' >> waybJS.txt ; gospider -a -S dominios -d 2 | grep -Eo "(http|https)://[^/\"].*\.js+" | sed "s#\] \- #\n#g" >> gospiderJS.txt ; cat gauJS.txt waybJS.txt gospiderJS.txt | sort -u >> saidaJS ; rm -rf *.txt ; cat saidaJS | anti-burl |awk '{print $4}' | sort -u >> 200Js.txt ; xargs -a 200Js.txt -n 2 -I@ bash -c "echo -e '\n[URL]: @\n'; python3 linkfinder.py -i @ -o cli" ; cat 200Js.txt  | python3 collector.py output ; rush -i output/urls.txt 'python3 SecretFinder.py -i {} -o cli | sort -u >> output/resultJSPASS'   
-    
+    #BurpSuite: extrae el contenido entre las etiquetas del script, generalmente uso getScriptTagContent.py
+    #después de esto guarda el contenido y usa linkfinder
+       python3 linkfinder.py -i burpscriptscontent.txt -o cli
+    #availableForPurchase.py: esta herramienta busca si un dominio está disponible para ser comprado, esta herramienta combinada con el buscador de enlaces y el recopilador es realmente poderosa. Muchas veces los desarrolladores por distracción se equivocan al escribir el dominio, tal vez el dominio esté importando un archivo javascript externo, etc.
+       cat paypalJS.txt|xargs -I @ bash -c 'python3 linkfinder.py -i @ -o cli' | python3 collector.py output | cat output/urls.txt | python3 availableForPurchase.py
+    #allJsToJson.py: realiza una solicitud a las URL que se le pasan y recupera todos los archivos js y me los guarda en un archivo json
+       cat myPaypalUrls.txt | python3 allJsToJson.py output.json | cat output.json  
+
