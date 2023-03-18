@@ -1,4 +1,4 @@
-#nulldev96_Metodology
+# nulldev96_Metodology
 
 *Provando todas las herramientas para encontar posible "XSS"* 
 
@@ -121,6 +121,26 @@
 
     sublist3r -d {dominio} >> sub.txt  | amass enum -d {dominio}  >> sub.txt | subfinder -d {dominio} >> sub.txt | assetfinder --subs-only {dominio} >> sub.txt | findomain -t {dominio}  >> sub.txt | crobat -s {dominio} >> sub.txt | anubis -t {dominio}  -S  >> anub.txt | turbolist3r.py -d {dominio} >> sub.txt | python3 SubDomainizer.py -u {dominio} >> sub.txt | acamar.py {dominio} 2> /dev/null | grep $dominio >> sub.txt | ctfr.py -d {dominio} >> subdomain.txt | github-subdomains.py -t {token} -d {dominio} >> sub.txt | cat sub.txt | anew subdomain.txt ; rm sub.txt && cat subdomain.txt
 
+#****_Brute-Force Subdominio_****
+
+    amass enum -brute -d example.com
+    shuffledns -d $dominio -w $wordlists -r $resolvers | sort -u | anew $dominio/sub/shuff.txt
+    puredns bruteforce $wordlists $dominio -r $resolvers | tee $dominio/sub/pure.txt
+    
+#****_Web crawling subdomain_****
+
+    echo "vulnweb.com" | subfinder | waybackurls | unfurl domains | anew subdomain.txt
+    echo "vulnweb.com" | waybackurls | unfurl domains | anew domain && cat domain.txt | subfinder | gauplus --subs | anew sub.txt
+    python3 waymore.py -i domain.com -mode U | unfurl domains | anew sundomain.txt
+
+ #****_Alteration/Permutations Scaning Y resolver o validar dns_****
+ 
+ echo "testphp.vulnweb.com" | subfinder  -silent | anew sub.txt && gotator -sub sub.txt -perm permutations.txtt -depth 1 -numbers 10 -mindup -adv -md | tee permsub.txt ; puredns resolve permsub.txt -r resolvers.txt | anew valido.tx
+ assetfinder -subs-only testphp.vulnweb.com | tee sub.txt ; gotator -sub sub.txt -perm permutations.txtt -depth 1 -numbers 10 -mindup -adv -md > perm.txt ; puredns resolve perm.txt -r resolvers.txt | anew valido.tx
+ echo "testphp.vulnweb.com" | subfinder  -silent | massdns -r resolvers.txt -t A -o S -w resul.txt
+ echo "testphp.vulnweb.com" | subfinder  -silent | altdns -i subdomain.txt -o data_output -w worl.txt -r -s results_output.txt
+
+ 
 #****_Forma rapida de busqueda o crawling History_URL ====>  "echo | waybackurls | gau | gauplus | cariddi | katana"_**** 
     
     echo "testphp.vulnweb.com" | waybackurls | anew url1.txt 
