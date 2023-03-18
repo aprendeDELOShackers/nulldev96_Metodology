@@ -92,30 +92,19 @@
 
 #****_Forma rapida de busqueda subdominio  ====>  sublist3r | amass | subfinder | assetfinder |findomain | crobat | anubis | turbolist3r.py | python3 SubDomainizer.py | acamar.py | ctfr.py | github-subdomains.py_****
 
-    #"Amass"
-        amass enum -d $dominio | sort -u | anew amass.txt
-    #"assetfinder"
-        assetfinder --subs-only $dominio | sort -u | anew sub/asset.txt
-    #"findomain"
-        findomain -t $dominio | sort -u | anew findo.txt
-    #"subfinder"
-        subfinder -d $dominio | sort -u | anew subfin.txt
-    #"sublist3r"
-        sublist3r -d $dominio -o sublis.txt
-    #"crobat"
-        crobat -s $dominio | sort -u | anew crob.txt
-    #"turbolist3r.py"
-        turbolist3r.py -d $dominio -o turbo.txt
-    #"ctfr.py"
-        ctfr.py -d $dominio -o ctfr.txt
-    #"anubis"
-        anubis -t $dominio  -S | sort -u | anew anub.txt
-    #"acamar.py"
-        acamar.py $dominio 2> /dev/null | grep $dominio | sort -u | anew acam.txt
-    #"github-subdomains.py"
-        github-subdomains.py -t {token} -d $dominio | sort -u | anew git_su.txt
+    amass enum -d $dominio | sort -u | anew amass.txt
+    assetfinder --subs-only $dominio | sort -u | anew sub/asset.txt
+    findomain -t $dominio | sort -u | anew findo.txt
+    subfinder -d $dominio | sort -u | anew subfin.txt
+    sublist3r -d $dominio -o sublis.txt
+    crobat -s $dominio | sort -u | anew crob.txt
+    turbolist3r.py -d $dominio -o turbo.txt
+    ctfr.py -d $dominio -o ctfr.txt
+    anubis -t $dominio  -S | sort -u | anew anub.txt
+    acamar.py $dominio 2> /dev/null | grep $dominio | sort -u | anew acam.txt
+    github-subdomains.py -t {token} -d $dominio | sort -u | anew git_su.txt
     #Registrarse en "https://recon.dev" para obtener la api y sacar subdomain con el comando "CURL"
-        curl "https://recon.dev/api/search?key={API}domain={domain}" | jq -r '.[].rawDomains'  set 's/ //g' | anew | httpx -silent | xargs -P3 I@ gospider -d 0 -s @ -c 5 -t 100 --blacklist jpg,jpeg,git,css,tif,tiff,png,ttf,wolf,wolf2,ico,pdf,svg,txt | grep -Eo '(http|https)://[^/"]+' | anew sub.txt
+    curl "https://recon.dev/api/search?key={API}domain={domain}" | jq -r '.[].rawDomains'  set 's/ //g' | anew | httpx -silent | xargs -P3 I@ gospider -d 0 -s @ -c 5 -t 100 --blacklist jpg,jpeg,git,css,tif,tiff,png,ttf,wolf,wolf2,ico,pdf,svg,txt | grep -Eo '(http|https)://[^/"]+' | anew sub.txt
 
 #****_Forma rapida de busqueda subdominio_****
 
@@ -135,10 +124,10 @@
 
  #****_Alteration/Permutations Scaning Y resolver o validar dns_****
  
- echo "testphp.vulnweb.com" | subfinder  -silent | anew sub.txt && gotator -sub sub.txt -perm permutations.txtt -depth 1 -numbers 10 -mindup -adv -md | tee permsub.txt ; puredns resolve permsub.txt -r resolvers.txt | anew valido.tx
- assetfinder -subs-only testphp.vulnweb.com | tee sub.txt ; gotator -sub sub.txt -perm permutations.txtt -depth 1 -numbers 10 -mindup -adv -md > perm.txt ; puredns resolve perm.txt -r resolvers.txt | anew valido.tx
- echo "testphp.vulnweb.com" | subfinder  -silent | massdns -r resolvers.txt -t A -o S -w resul.txt
- echo "testphp.vulnweb.com" | subfinder  -silent | altdns -i subdomain.txt -o data_output -w worl.txt -r -s results_output.txt
+     echo "testphp.vulnweb.com" | subfinder  -silent | anew sub.txt && gotator -sub sub.txt -perm permutations.txtt -depth 1 -numbers 10 -mindup -adv -md | tee permsub.txt ; puredns resolve permsub.txt -r resolvers.txt | anew valido.tx
+     assetfinder -subs-only testphp.vulnweb.com | tee sub.txt ; gotator -sub sub.txt -perm permutations.txtt -depth 1 -numbers 10 -mindup -adv -md > perm.txt ; puredns resolve perm.txt -r resolvers.txt | anew valido.tx
+     echo "testphp.vulnweb.com" | subfinder  -silent | massdns -r resolvers.txt -t A -o S -w resul.txt
+     echo "testphp.vulnweb.com" | subfinder  -silent | altdns -i subdomain.txt -o data_output -w worl.txt -r -s results_output.txt
 
  
 #****_Forma rapida de busqueda o crawling History_URL ====>  "echo | waybackurls | gau | gauplus | cariddi | katana"_**** 
