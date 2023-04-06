@@ -86,6 +86,11 @@
      
      cat /usr/share/wordlists/SecLists/Fuzzing/SQLi/Generic-BlindSQLi.fuzzdb.txt | while read payload;do echo http://testphp.vulnweb.com | gau | qsreplace $payload | jeeves -t 5;done
 
+#****_Forma rapida de posible busqueda SSRF_****
+    
+    echo "testphp.vulnweb.com" | subfinder | waybackurls | gf ssrf
+    python3 paramspider.py -d testphp.vulnweb.com -o tst ; cat output/tst | gf ssrf
+
 ##############################################################################################
 
 # Time_tool
