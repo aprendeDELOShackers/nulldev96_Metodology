@@ -219,3 +219,6 @@
     #allJsToJson.py: realiza una solicitud a las URL que se le pasan y recupera todos los archivos js y me los guarda en un archivo json
        cat myPaypalUrls.txt | python3 allJsToJson.py output.json | cat output.json  
 
+#****_Forma rapida de busqueda  redireccion con "GF"_****
+
+       assetfinder --subs-only vulnweb.com | sort -u | anew asset.txt | cat asset.txt | gf redirect | sed 's/^tesla.txt:[0-9]*[0-9]://g' | sed 's/no$/https://google.com/g' | httpx -silent -status-code -title -threads 100
