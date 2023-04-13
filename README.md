@@ -219,6 +219,30 @@
     #allJsToJson.py: realiza una solicitud a las URL que se le pasan y recupera todos los archivos js y me los guarda en un archivo json
        cat myPaypalUrls.txt | python3 allJsToJson.py output.json | cat output.json  
 
-#****_Forma rapida de busqueda  redireccion con "GF"_****
+#****_Forma rapida de busqueda redireccion con "GF"_****
 
        assetfinder --subs-only vulnweb.com | sort -u | anew asset.txt | cat asset.txt | gf redirect | sed 's/^tesla.txt:[0-9]*[0-9]://g' | sed 's/no$/https://google.com/g' | httpx -silent -status-code -title -threads 100
+
+#****_Forma rapida de enumerar api con "assetfinder" "httpx" "aquatone"_****
+
+       assetfinder --subs-only {dominio} | sort -u | anew asset.txt | cat asset.txt | httpx -silent -path /api/ -title -status-code | grep -i "den" | anew api.txt | cat api.txt  | aquatone
+
+#****_Forma rapida de enumerar subdominio de *department of Defense* con "curl" "crt.sh" "xargs"_****
+
+       curl -s "https://crt.sh/?q=.mil" | grep .mil | tr 'B' '\n' | tr 'R>\/<TD\/' ' ' | xargs -I @ echo @ 
+        | sort -u | anew | tee sub_.mil.txt
+
+#****_Forma rapida de enumerar PUERTO ABIERTO con "subfinder" "naabu"_****
+
+       subfinder -d testphp.com -silent | xargs -I@ sh -c 'naabu -host @ -silent'
+
+#****_Forma rapida de enumerar PARAMETRO con "subfinder" "PARAMSPIDER" "xargs" "rust"_****
+
+       subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'paramspider.py -d @ -l high | -o param.txt' ; cat ouput/param.txt
+       subfinder -d testphp.com -silent | anew sub.txt | rust -i sub.txt 'paramspider.py -d {} -l high | -o param.txt' ; cat ouput/param.txt'
+
+****_Forma rapida de enumerar subdominio con "subfinder" "xargs"_****
+       
+       subfinder -d testphp.com -silent | anew sub.txt | xargs -a vulnweb.com -I@ sh -c 'subfinder -d @ | anew domain.txt
+       #Forma rapida de enumerar subdominio con "subfinder" "xargs" "crt.sh"
+       subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'curl -s "https://crt.sh/?q=%25.vulnweb.com&output=json" | jq -r '.[].name_value'' | sed 's/\*\.//g' | anew sub.txt
