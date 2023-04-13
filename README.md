@@ -2,7 +2,7 @@
 
 *Provando todas las herramientas para encontar posible "XSS"* 
 
-|||||||||||||||||||||||||||||||_FIND "XSS" ===(BUG BOUNTY)====_||||||||||||||||||||||||||||||
+                |||||||||||||||||||||||||||||||_FIND "XSS" ===(BUG BOUNTY)====_||||||||||||||||||||||||||||||
 
     
 #****_Forma rapida de busqueda _XSS_ ======> "echo | way | anew | cat | egrep | gf | qsreplace | while | curl | grep_****
@@ -246,3 +246,34 @@
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a vulnweb.com -I@ sh -c 'subfinder -d @ | anew domain.txt
        #Forma rapida de enumerar subdominio con "subfinder" "xargs" "crt.sh"
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'curl -s "https://crt.sh/?q=%25.vulnweb.com&output=json" | jq -r '.[].name_value'' | sed 's/\*\.//g' | anew sub.txt
+
+****_Forma rapida de resolverDNS de varios subdominio dado_****
+
+       subfinder -d vulnweb.com -silent | anew sub.txt | puredns resolve sub.txt -r resolvers.txtt | anew subreal.txt
+
+****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
+
+       subfinder -d vulnweb.com -silent | gau | anew | nuclei -t /root/nuclei-templates/vulnerabilities | anew vulns.txt
+       
+       #Con la funcion de "-etags" descartamos lo que no, nos interesa
+       subfinder -d vulnweb.com -silent | gau | anew | nuclei -t /root/nuclei-templates/ -etags sqli,xss,rce -c 50 -o vuln-nuclei.txt
+       
+       #Mas eficas con primero "Resolver DNS" y ejecutar "gau","nuclei"
+       subfinder -d vulnweb.com -silent | puredns resolve -r resolvers.txtt | anew subreal.txt ; cat subreal.txt | gau | anew nuclei -t /root/nuclei-templates/ -severity low,medium,high,critical -c 50 -o vuln-nuclei.txt 
+       
+       #Ejecutar nuclei a una URL o Host dado de forma directa y le especificamos con -tags lo que nos interesa escontar
+       nuclei -u https://example.com -tags cve -severity critical,high -author geeknik
+       #search cves
+       cat url_valido.txt | nuclei -t /root/nuclei-templates/cves/ -c 50 -o cves.txt
+       #search file
+       cat url_valido.txt | nuclei -t /root/nuclei-templates/file/ -c 50 -o file.txt
+       #search tecnologies
+       cat url_valido.txt | nuclei -t /root/nuclei-templates/technologies/ -c 50 -o technologies.txt
+       #search severity
+       cat url_valido.txt | nuclei -t /root/nuclei-templates/ -severity low,medium,high,critical -c 50 -o vuln-nuclei.txt
+       #search templates
+       cat url_valido.txt | nuclei -t /root/nuclei-templates/ -c 50 -o nuclei-templates.txt
+
+
+
+       
