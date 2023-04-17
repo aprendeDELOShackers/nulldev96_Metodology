@@ -251,6 +251,27 @@
 
        subfinder -d vulnweb.com -silent | anew sub.txt | puredns resolve sub.txt -r resolvers.txtt | anew subreal.txt
 
+****_Forma rapida de extraer Rango de Red usando "mapcidr"_****
+
+    subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt
+    
+****_Forma rapida de extraer dominio o sub de un "Rango de Red" mediante consulta "ptr"_****
+
+    subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt ; cat rangoRed.txt | mapcidr -cl rangoRed.txt -aggregate | dnsx -silent -resp-only -ptr | anew sub.txt
+    #extraer subdominio de un solo "Rango de Red" mediante consulta "ptr"
+    mapcidr -cidr 44.228.249.3/32 -silent | dnsx -silent -resp-only -ptr
+
+****_Forma rapida de extraer dominio de un solo "Rango de Red" mediante "prips"_****
+
+    prips 35.81.188.86/32 | hakrevdns |  awk '{print $2}'  | anew domain.txt
+
+****_Forma rapida de obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
+
+    subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt ; cat rangoRed.txt | mapcidr -cidr rangoRed.txt | anew ip.txt
+    
+    #obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
+    echo 44.238.29.244/32 | mapcidr
+
 ****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
 
        subfinder -d vulnweb.com -silent | gau | anew | nuclei -t /root/nuclei-templates/vulnerabilities | anew vulns.txt
@@ -258,7 +279,7 @@
        #Con la funcion de "-etags" descartamos lo que no, nos interesa
        subfinder -d vulnweb.com -silent | gau | anew | nuclei -t /root/nuclei-templates/ -etags sqli,xss,rce -c 50 -o vuln-nuclei.txt
        
-       #Mas eficas con primero "Resolver DNS" y ejecutar "gau","nuclei"
+       #Mas eficas con "Resolver DNS" y ejecutar "gau","nuclei"
        subfinder -d vulnweb.com -silent | puredns resolve -r resolvers.txtt | anew subreal.txt ; cat subreal.txt | gau | anew nuclei -t /root/nuclei-templates/ -severity low,medium,high,critical -c 50 -o vuln-nuclei.txt 
        
        #Ejecutar nuclei a una URL o Host dado de forma directa y le especificamos con -tags lo que nos interesa escontar
