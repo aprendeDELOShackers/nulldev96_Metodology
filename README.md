@@ -21,6 +21,10 @@
       
       echo "testphp.vulnweb.com" | waybackurls | egrep -iv ".(jpg|jpeg|git|css|tif|tiff|png|ttf|wolf|wolf2|ico|pdf|svg|txt|js|html)" |  kxss | sed 's/=.*/=/' | sed 's/URL: //' | dalfox pipe
 
+#****_Forma rapida de busqueda _XSS_ ======>  "echo | way | httpx | katana | kxss | sed | dalfox"_****
+
+      echo "testphp.vulnweb.com" | httpx -silent | katana d 20 | Gxss -c 100 -p Xss | sort -u | dalfox pipe --skip-bav
+
 #****_Forma rapida de busqueda _XSS_ ======>  "echo | way | httpx | Gxss | dalfox"_**** 
      
      echo "testphp.vulnweb.com" | waybackurls | httpx -silent | Gxss -c 100 -p Xss | sort -u | dalfox p     
@@ -238,6 +242,8 @@
 
 #****_Forma rapida de enumerar PARAMETRO con "subfinder" "PARAMSPIDER" "xargs" "rust"_****
 
+       arjun -u http://testphp.vulnweb.com -m Post --stable | anew test.txt
+       python3 paramspider.py -d testphp.vulnweb.com --output param.txt
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'paramspider.py -d @ -l high | -o param.txt' ; cat ouput/param.txt
        subfinder -d testphp.com -silent | anew sub.txt | rust -i sub.txt 'paramspider.py -d {} -l high | -o param.txt' ; cat ouput/param.txt'
 
@@ -247,6 +253,13 @@
        #Forma rapida de enumerar subdominio con "subfinder" "xargs" "crt.sh"
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'curl -s "https://crt.sh/?q=%25.vulnweb.com&output=json" | jq -r '.[].name_value'' | sed 's/\*\.//g' | anew sub.txt
 
+#****_Forma rapida de busqueda  "ASN o sistema autónomo" con "amass"_****
+
+       amass intel -org vulnweb.com | awk -F, '{print $1}' | anew asn.txt | for i in $(cat asn.txt);do amass intel -asn $i;done | anew asntest.txt
+       amas intel -org vulnwe.com --max-dns-queries 2500 | awk -F, '{print $1}' | anew asn.txt | cat asn.txt ORS="." | set 's/.$//g' | xargs -P3 -I@ -d "." amass intel -asn @ --max-dns-queries 2500 | anew asntest.txt
+       #Fuentes de busqueda de "ASN"
+       bgp.he.net} https://bgp.he.net
+       
 ****_Forma rapida de resolverDNS de varios subdominio dado_****
 
        subfinder -d vulnweb.com -silent | anew sub.txt | puredns resolve sub.txt -r resolvers.txtt | anew subreal.txt
