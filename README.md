@@ -233,8 +233,7 @@
 
 #****_Forma rapida de enumerar subdominio de *department of Defense* con "curl" "crt.sh" "xargs"_****
 
-       curl -s "https://crt.sh/?q=.mil" | grep .mil | tr 'B' '\n' | tr 'R>\/<TD\/' ' ' | xargs -I @ echo @ 
-        | sort -u | anew | tee sub_.mil.txt
+       curl -s "https://crt.sh/?q=.mil" | grep .mil | tr 'B' '\n' | tr 'R>\/<TD\/' ' ' | xargs -I @ echo @ | sort -u | anew | tee sub_.mil.txt
 
 #****_Forma rapida de enumerar PUERTO ABIERTO con "subfinder" "naabu"_****
 
@@ -253,10 +252,10 @@
        #Forma rapida de enumerar subdominio con "subfinder" "xargs" "crt.sh"
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'curl -s "https://crt.sh/?q=%25.vulnweb.com&output=json" | jq -r '.[].name_value'' | sed 's/\*\.//g' | anew sub.txt
 
-#****_Forma rapida de busqueda  "ASN o sistema autónomo" con "amass"_****
+#****_Forma rapida de busqueda de "Donimio" Relacionada a un "ASN o Sistema Autónomo" usando "amass"_**** 
 
-       amass intel -org vulnweb.com | awk -F, '{print $1}' | anew asn.txt | for i in $(cat asn.txt);do amass intel -asn $i;done | anew asntest.txt
-       amas intel -org vulnwe.com --max-dns-queries 2500 | awk -F, '{print $1}' | anew asn.txt | cat asn.txt ORS="." | set 's/.$//g' | xargs -P3 -I@ -d "." amass intel -asn @ --max-dns-queries 2500 | anew asntest.txt
+       amass intel -org vulnweb.com | awk -F, '{print $1}' | anew asn.txt ; for i in $(cat asn.txt);do amass intel -asn $i;done | anew dominio.txt
+       amas intel -org vulnwe.com --max-dns-queries 2500 | awk -F, '{print $1}' | anew asn.txt ; cat asn.txt ORS="," | set 's/.$//g' | xargs -P3 -I@ -d "." amass intel -asn @ --max-dns-queries 2500 | anew dominio.txt
        #Fuentes de busqueda de "ASN"
        bgp.he.net} https://bgp.he.net
        
@@ -284,6 +283,14 @@
     
     #obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
     echo 44.238.29.244/32 | mapcidr
+    
+#_obtener lista de "IP" de un subdominio usando dig_****
+
+    echo "vulnweb.com" | subfinder -silent | anew sub.txt | puredns resolve sub.txt -r resolvers.txt | anew subreal.txt ; for i in $(cat subreal.txt);do dig +short $i | grep -E "[0-9][0-9][0-9]\.[0-9][0-9][0-9]\.";done >> ip.txt
+
+#_obtener lista de "IP" de un subdominio usando "massdns" y "gf ip"_****
+
+    echo "vulnweb.com" | subfinder -silent | anew sub.txt ; cat sub.txt |  massdns -r $(pwd)/resolvers.txtt -t A -o S -w massd.txt | awk '{print $3}' ; gf ip | anew >> ip.txt
 
 ****_Forma rapida de encontar "dominio" atarves de webspider usando "unfurl -u domains"_****
 
@@ -295,6 +302,15 @@
     subfinder -d vulnweb.com -silent | anew sub.txt && cat sub.txt | fhc | html-tool tags title a strong | anew comment.txt
     subfinder -d vulnweb.com -o s.txt && cat s.txt | fhc | html-tool comments | anew comment.txt
     cat subreal.txt | fhc | html-tool tags title a strong && find . -type f -name "*.html" | html-tool attribs src href
+
+#****_Forma rapida de busqueda de posible Vulns usando "meg"_**** 
+ 
+    echo "vulnweb.com" | waybackurls | unfurl domains | anew | httpx | anew host.txt ; meg path httpx_host ; cat /out/index | gf secrets | grep -i "token" 
+
+#****_Forma rapida de busqueda de posible Vulns usando "Meg"_**** 
+ 
+    echo "vulnweb.com" | subfinder -silent | anew sub.txt ; cat sub.txt | httpx  | anew httpxHost.txt ; meg path httpxHost.txt ; cat /out/index | grep -rnw "password"
+
 
 ****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
 
