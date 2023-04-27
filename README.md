@@ -267,6 +267,12 @@
 
     subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt
     
+#****_Forma rapida de extraer Rango_de_Red  o Ip/Range usando  la tool "amass" y "asn"_****
+    
+    #Búsqueda de números de sistemas autónomos con estadísticas de BGP, interconexión e información de prefijos 
+
+    amass intel -org vulnweb.com | awk -F, '{print $1}' | anew asn.txt ; for i in $(cat asn.txt);do asn $i;done | anew dominio.txt 
+    
 ****_Forma rapida de extraer dominio o sub de un "Rango de Red" mediante consulta "ptr"_****
 
     subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt ; cat rangoRed.txt | mapcidr -cl rangoRed.txt -aggregate | dnsx -silent -resp-only -ptr | anew sub.txt
@@ -281,14 +287,14 @@
 
     subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt ; cat rangoRed.txt | mapcidr -cidr rangoRed.txt | anew ip.txt
     
-    #obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
+    #obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"
     echo 44.238.29.244/32 | mapcidr
     
-#_obtener lista de "IP" de un subdominio usando dig_****
+#****_obtener lista de "IP" de un subdominio usando dig_****
 
     echo "vulnweb.com" | subfinder -silent | anew sub.txt | puredns resolve sub.txt -r resolvers.txt | anew subreal.txt ; for i in $(cat subreal.txt);do dig +short $i | grep -E "[0-9][0-9][0-9]\.[0-9][0-9][0-9]\.";done >> ip.txt
 
-#_obtener lista de "IP" de un subdominio usando "massdns" y "gf ip"_****
+#****_obtener lista de "IP" de un subdominio usando "massdns" y "gf ip"_****
 
     echo "vulnweb.com" | subfinder -silent | anew sub.txt ; cat sub.txt |  massdns -r $(pwd)/resolvers.txtt -t A -o S -w massd.txt | awk '{print $3}' ; gf ip | anew >> ip.txt
 
@@ -310,6 +316,10 @@
 #****_Forma rapida de busqueda de posible Vulns usando "Meg"_**** 
  
     echo "vulnweb.com" | subfinder -silent | anew sub.txt ; cat sub.txt | httpx  | anew httpxHost.txt ; meg path httpxHost.txt ; cat /out/index | grep -rnw "password"
+
+#****_Puerto Comunes_****
+
+        "80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,500",5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017"               
 
 
 ****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
@@ -334,6 +344,10 @@
        cat url_valido.txt | nuclei -t /root/nuclei-templates/ -severity low,medium,high,critical -c 50 -o vuln-nuclei.txt
        #search templates
        cat url_valido.txt | nuclei -t /root/nuclei-templates/ -c 50 -o nuclei-templates.txt
+
+#****_Forma rapida de encontrar Vulns usando "Nuclei" y "httpx" con varios puerto comunes_****
+
+    echo "testphp.vulnweb.com" | haktrails subdomains | anew domains ; cat domaians | httpx -silent -p 80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017 | nuclei -severity low,medium,high,critical | anew test.txt
 
 
 
