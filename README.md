@@ -1,6 +1,6 @@
-# nulldev96_Metodology
+# _nulldev96_Metodology_
 
-*Provando todas las herramientas para encontar posible "XSS"* 
+*_Provando todas las herramientas para encontar posible "XSS"_* 
 
                 |||||||||||||||||||||||||||||||_FIND "XSS" ===(BUG BOUNTY)====_||||||||||||||||||||||||||||||
 
@@ -68,11 +68,15 @@
 #****_Forma rapida de busqueda _XSS_ ======>  "katana | urldedupe | bhedak | airixss | egrep"_****
      
      katana -u http://testphp.vulnweb.com -o crawlin.txt;cat crawlin.txt | urldedupe -qs | bhedak '"><svg onload=confirm(1)>' | airixss -payload "confirm(1)" | egrep -v 'Not'
+     
+#****_Forma rapida de encontrar Vulns  "xss" usando "subfinder" "Nuclei" y "fhc"_****
 
+     subfinder -d vulnweb.com -silent | anew sub.txt ; cat sub.txt | fhc | nuclei -tags xss -exclude-severity info -rl 20 -c 10 -o xss_vulns.txt
+___________________________________________________________________________________________________________
 
-##############################################################################################
+#_SEARCH "XSS_BLING"_
 
-  |||||||||||||||||||||||||||||||_FIND "XSS_BLING" ===(BUG BOUNTY)====_||||||||||||||||||||||||||||||
+        |||||||||||||||||||||||||||||||_FIND "XSS_BLING" ===(BUG BOUNTY)====_||||||||||||||||||||||||||||||
 
 #****_Forma rapida de busqueda _XSS_ ======>  "echo | way | gf | qsreplace | jeecves | grep"_****
      
@@ -223,6 +227,18 @@
     #allJsToJson.py: realiza una solicitud a las URL que se le pasan y recupera todos los archivos js y me los guarda en un archivo json
        cat myPaypalUrls.txt | python3 allJsToJson.py output.json | cat output.json  
 
+#****_javascript rutas de archivos de información sencible en aplicaciones web_****
+
+    1./js/config.js                      2./js/credentials.js               3./js/secrets.js
+    4./js/keys.js                        5./js/password.js                  6./js/api_key.js
+    7./js/auth_tokens.js                 8./js/access_tokens.js             9./js/sessions.js
+    10./js/authorization.js              11./js/encryption.js               12./js/certificates.js
+    13./js/policies.js                   14./js/permissions.js              15./js/privileges.js
+    16./js/hashes.js                     17./js/salts.js                    18./js/nonces.js
+    19./js/signatures.js                 20./js/digests.js                  21./js/tokens.js
+    22./js/cookies.js                    23./js/passphrases.js              24./js/ssl_keys.js
+    25./js/topsecr3tdonotlook.js
+
 #****_Forma rapida de busqueda redireccion con "GF"_****
 
        assetfinder --subs-only vulnweb.com | sort -u | anew asset.txt | cat asset.txt | gf redirect | sed 's/^tesla.txt:[0-9]*[0-9]://g' | sed 's/no$/https://google.com/g' | httpx -silent -status-code -title -threads 100
@@ -239,14 +255,14 @@
 
        subfinder -d testphp.com -silent | xargs -I@ sh -c 'naabu -host @ -silent'
 
-#****_Forma rapida de enumerar PARAMETRO con "subfinder" "PARAMSPIDER" "xargs" "rust"_****
+#****_Forma rapida de enumerar PARAMETRO o endpoint o puntos_finales con "subfinder" "PARAMSPIDER" "xargs" "rust"_****
 
        arjun -u http://testphp.vulnweb.com -m Post --stable | anew test.txt
        python3 paramspider.py -d testphp.vulnweb.com --output param.txt
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'paramspider.py -d @ -l high | -o param.txt' ; cat ouput/param.txt
        subfinder -d testphp.com -silent | anew sub.txt | rust -i sub.txt 'paramspider.py -d {} -l high | -o param.txt' ; cat ouput/param.txt'
 
-****_Forma rapida de enumerar subdominio con "subfinder" "xargs"_****
+#****_Forma rapida de enumerar subdominio con "subfinder" "xargs"_****
        
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a vulnweb.com -I@ sh -c 'subfinder -d @ | anew domain.txt
        #Forma rapida de enumerar subdominio con "subfinder" "xargs" "crt.sh"
@@ -259,31 +275,34 @@
        #Fuentes de busqueda de "ASN"
        bgp.he.net} https://bgp.he.net
        
-****_Forma rapida de resolverDNS de varios subdominio dado_****
+#****_Forma rapida de resolverDNS de varios subdominio dado_****
 
        subfinder -d vulnweb.com -silent | anew sub.txt | puredns resolve sub.txt -r resolvers.txtt | anew subreal.txt
 
-****_Forma rapida de extraer Rango de Red usando "mapcidr"_****
+#****_Forma rapida de extraer Rango_de_Red usando "mapcidr"_****
 
     subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt
     
-#****_Forma rapida de extraer Rango_de_Red  o Ip/Range usando  la tool "amass" y "asn"_****
+#****_Forma rapida de extraer Rango_de_Red  o Ip/Range usando la tool "amass" y "asn"_****
     
-    #Búsqueda de números de sistemas autónomos con estadísticas de BGP, interconexión e información de prefijos 
-
+    #_Búsqueda de números de sistemas autónomos con estadísticas de BGP, interconexión e información de prefijos_ 
     amass intel -org vulnweb.com | awk -F, '{print $1}' | anew asn.txt ; for i in $(cat asn.txt);do asn $i;done | anew dominio.txt 
     
-****_Forma rapida de extraer dominio o sub de un "Rango de Red" mediante consulta "ptr"_****
+#****_Forma rapida de extraer subdominio de un "Rango_de_Red" mediante consulta "ptr"_****
 
     subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt ; cat rangoRed.txt | mapcidr -cl rangoRed.txt -aggregate | dnsx -silent -resp-only -ptr | anew sub.txt
     #extraer subdominio de un solo "Rango de Red" mediante consulta "ptr"
     mapcidr -cidr 44.228.249.3/32 -silent | dnsx -silent -resp-only -ptr
 
-****_Forma rapida de extraer dominio de un solo "Rango de Red" mediante "prips"_****
+#****_Forma rapida de extraer dominio o sub de un solo "Rango_de_Red" mediante "DNS_inversa" con "prips"_****
 
     prips 35.81.188.86/32 | hakrevdns |  awk '{print $2}'  | anew domain.txt
+    
+#****_Forma rapida de busqueda DNS_inversa conociendo su  Ip/Range usando  la tool "hakrevdns"_****
 
-****_Forma rapida de obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
+    prips 35.81.188.86/32 | hakrevdns |  awk '{print $2}'  | anew domain.txt | httpx -silent
+
+#****_Forma rapida de obtener lista de "IP" de un "Rango de Red" o subRed dado con "mapcidr"_****
 
     subfinder -d vulnweb.com -silent | anew sub.txt | cat sub.txt | dnsx -silent -a -resp-only | anew ip.txt ; cat ip | mapcidr -aggregate-approx | anew rangoRed.txt ; cat rangoRed.txt | mapcidr -cidr rangoRed.txt | anew ip.txt
     
@@ -298,11 +317,11 @@
 
     echo "vulnweb.com" | subfinder -silent | anew sub.txt ; cat sub.txt |  massdns -r $(pwd)/resolvers.txtt -t A -o S -w massd.txt | awk '{print $3}' ; gf ip | anew >> ip.txt
 
-****_Forma rapida de encontar "dominio" atarves de webspider usando "unfurl -u domains"_****
+#****_Forma rapida de encontar "dominio" atarves de webspider usando "unfurl -u domains"_****
 
     echo [+] ejecutando subfinder [+] ; echo "vulnweb.com" | subfinder -silent | anew sub.txt1 ; cat sub.txt1 | httpx -silent | anew http.txt2 ; gospider -S http.txt2 --js -t 50 -d 1 --sitemap --robots -w -r | tail -1000 | anew gos.txt3 ; cat gos.txt3 | grep -Eo 'https?://[^ ]+' | sed 's/]$//' | unfurl -u domains | anew subvalido.txt4
     
-****_Forma rapida de extraer "comentario interesante de un sitios web"_****
+#****_Forma rapida de extraer "comentario interesante de un sitios web"_****
 
     #time-tool subfinder | cat | fhc | html-tool | anew
     subfinder -d vulnweb.com -silent | anew sub.txt && cat sub.txt | fhc | html-tool tags title a strong | anew comment.txt
@@ -322,7 +341,7 @@
         "80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,500",5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017"               
 
 
-****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
+#****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
 
        subfinder -d vulnweb.com -silent | gau | anew | nuclei -t /root/nuclei-templates/vulnerabilities | anew vulns.txt
        
@@ -349,6 +368,18 @@
 
     echo "testphp.vulnweb.com" | haktrails subdomains | anew domains ; cat domaians | httpx -silent -p 80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017 | nuclei -severity low,medium,high,critical | anew test.txt
 
+#****_Forma rapida para buscar  vuln sql_injection con "sqlmap"_****
 
+     subfinder -d vulnweb.com -silent | anew sub.txt ; cat sub.txt | fhc | anew | gau | gf sqli | anew sq.txt  & sqlmap -m sq.txt --batch >> test_sql.txt
+     
+#****_Forma rapida para buscar  Rastreo de puerto o servicio con "masscan"_****
+
+    subfinder -d vulnweb.com -silent | anew sub.txt ; cat sub.txt  | dnsx -silent  -resp | anew res_dns.txt ; cat res_dns.txt | awk '{print $2}' | tr -d "[]" > ip.txt ; cat ip.txt  | masscan -p0-65365 --rate=100000 --banners | anew scan.txt
+
+  
+ #****_Forma rapida de busqueda escaneo de puerto  usando  con "naabu"_****
+
+    subfinder -d vulnweb.com -silent | anew sub.txt ; cat sub.txt  | dnsx -silent -a -resp-only | anew ip.txt ; cat ip.txt | naabu > port.txt     
+     
 
        
