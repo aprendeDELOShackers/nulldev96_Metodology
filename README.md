@@ -72,6 +72,10 @@
 #****_Forma rapida de encontrar Vulns  "xss" usando "subfinder" "Nuclei" y "fhc"_****
 
      subfinder -d vulnweb.com -silent | anew sub.txt ; cat sub.txt | fhc | nuclei -tags xss -exclude-severity info -rl 20 -c 10 -o xss_vulns.txt
+     
+#****_Forma rapida de escanear a objetivos "bugbounty" bucando xss con dalfox_****
+
+     wget https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/domains.txt -nv | anew | httpx -silent -threads 500 | xargs -I@ dalfox url @ | anew vulnxss.txt
 ___________________________________________________________________________________________________________
 
 #_SEARCH "XSS_BLING"_
@@ -142,7 +146,10 @@ ________________________________________________________________________________
      echo "testphp.vulnweb.com" | subfinder  -silent | massdns -r resolvers.txt -t A -o S -w resul.txt
      echo "testphp.vulnweb.com" | subfinder  -silent | altdns -i subdomain.txt -o data_output -w worl.txt -r -s results_output.txt
 
- 
+#****_Forma rapida  de Checkear sip un host es propietario de CloudFlare_****
+
+    echo "vulnweb.com" | subfinder -silent | anew | filter-resolved | cf-check -d | naabu -silent -verify | httpx -silent | tee host.txt 
+
 #****_Forma rapida de busqueda o crawling History_URL ====>  "echo | waybackurls | gau | gauplus | cariddi | katana"_**** 
     
     echo "testphp.vulnweb.com" | waybackurls | anew url1.txt 
@@ -261,12 +268,20 @@ ________________________________________________________________________________
        python3 paramspider.py -d testphp.vulnweb.com --output param.txt
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'paramspider.py -d @ -l high | -o param.txt' ; cat ouput/param.txt
        subfinder -d testphp.com -silent | anew sub.txt | rust -i sub.txt 'paramspider.py -d {} -l high | -o param.txt' ; cat ouput/param.txt'
+       
+#****_Forma rapida de busqueda de Paquete de descubrimiento de parámetros(parameters) ocultos con "X8"_****
+
+      echo "vulnweb.com" | subfinder -silent | httpx -silent | sed -s 's/$/\//' | xargs -a -d10 -I{} sh -c 'x8 -u {} -w wordlists.txt -o param.txt'
 
 #****_Forma rapida de enumerar subdominio con "subfinder" "xargs"_****
        
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a vulnweb.com -I@ sh -c 'subfinder -d @ | anew domain.txt
        #Forma rapida de enumerar subdominio con "subfinder" "xargs" "crt.sh"
        subfinder -d testphp.com -silent | anew sub.txt | xargs -a sub.txt -I@ sh -c 'curl -s "https://crt.sh/?q=%25.vulnweb.com&output=json" | jq -r '.[].name_value'' | sed 's/\*\.//g' | anew sub.txt
+
+#****_Forma rapida de busqueda "subdominio" dentro de otro + "subdominio"_****
+
+      echo "vulnweb.com" | assetfinder | anew sub.txt ; xargs -a sub.txt -I{} sh -c 'subfinder -d {} -o sub2.txt'
 
 #****_Forma rapida de busqueda de "Donimio" Relacionada a un "ASN o Sistema Autónomo" usando "amass"_**** 
 
@@ -340,6 +355,13 @@ ________________________________________________________________________________
 
         "80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,500",5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017"               
 
+#****_Forma rapida de busqueda de archivos .git con "goop"_****
+
+      echo "vulnweb.com" | subfinder -silent | anew sub.txt ;  xargs -a sub.txt -P10 -I{} sh -c 'goop {}'
+      #con lista de subdominio
+      cat direct | xargs -a direct -I@ sh -c 'goop -l @'
+      #con  simple dominio 
+      goop vulnweb.com | egrep "404"
 
 #****_Forma rapida de encontar vulns con Nuclei usando plantillas de nuclei"_****
 
@@ -381,5 +403,8 @@ ________________________________________________________________________________
 
     subfinder -d vulnweb.com -silent | anew sub.txt ; cat sub.txt  | dnsx -silent -a -resp-only | anew ip.txt ; cat ip.txt | naabu > port.txt     
      
+#****_Forma rapida saber propietario de CloudFlare y scan nuclei de exploración de archivos_****
+
+    echo "vulnweb.com" | subfinder -silent | anew | filter-resolved | cf-check -d | naabu -silent -verify | httpx -silent | tee host.txt ; cat host.txt | nuclei -t /root/nuclei-templates/ -o nucle1.txt
 
        
